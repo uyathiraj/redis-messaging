@@ -11,6 +11,6 @@ public class StringUtils {
 		if (str == null || str.equals("")) {
 			return true;
 		}
-		return true;
+		return false;
 	}
 }

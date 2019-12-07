@@ -3,12 +3,15 @@ package com.redis.messaging.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.redis.messaging.util.StringUtils;
+
 /**
  * Base event
+ * 
  * @author yathiraj
  *
  */
-public class Message implements Serializable,Comparable<Message>{
+public class Message implements Serializable, Comparable<Message> {
 
 	/**
 	 * 
@@ -95,6 +98,13 @@ public class Message implements Serializable,Comparable<Message>{
 		} else {
 			return 0;
 		}
+	}
+
+	public boolean isEmpty() {
+		if (StringUtils.isEmpty(this.body)) {
+			return true;
+		}
+		return false;
 	}
 
 }

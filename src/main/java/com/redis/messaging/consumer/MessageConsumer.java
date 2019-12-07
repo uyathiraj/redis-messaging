@@ -2,6 +2,7 @@ package com.redis.messaging.consumer;
 
 import java.util.Set;
 
+import com.redis.messaging.error.RedisMessageException;
 import com.redis.messaging.listener.RedisMessageListner;
 import com.redis.messaging.model.Message;
 
@@ -16,7 +17,7 @@ public interface MessageConsumer<T extends Message> {
 
 	T consume(@NonNull String channelName) throws InterruptedException;
 
-	void consume(@NonNull String channelName, RedisMessageListner<T> listner);
+	void consume(@NonNull String channelName, RedisMessageListner<T> listner) throws RedisMessageException;
 
 	void subscribe(@NonNull String channelName, RedisMessageListner<T> listener);
 

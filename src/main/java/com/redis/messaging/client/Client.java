@@ -1,7 +1,6 @@
 package com.redis.messaging.client;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.redis.messaging.consumer.RedisMessageConsumer;
 import com.redis.messaging.listener.RedisMessageListner;
@@ -15,21 +14,9 @@ public class Client {
 
 		String channelName = "1234567890";
 
-		RedisMessagePublisher<Message> publisher = new RedisMessagePublisher<Message>();
-		RedisMessageConsumer<Message> consumer = new RedisMessageConsumer<Message>();
-		Message msg = new Message();
-		msg.setBody("Hi-3");
-		msg.setSender("1234567890");
-		msg.setSentTime(LocalDateTime.now());
-		System.out.println("Publishing message");
-		publisher.publishMessage(msg, "1234567890");
+		RedisMessagePublisher<Message> publisher = RedisMessagePublisher.getNewInstance(Message.class);
+		RedisMessageConsumer<Message> consumer = RedisMessageConsumer.getNewInstance(Message.class);
 
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		System.out.println("Consumeing message");
 		// List<Message> consumedMsgs = consumer.consume("1234567890");
@@ -37,18 +24,25 @@ public class Client {
 		RedisMessageListner<Message> listener = (consumedMsg) -> {
 			System.out.println("Inside the procerssor");
 
-			System.out.println(Thread.currentThread().getName() +">>"+ consumedMsg);
+			System.out.println(Thread.currentThread().getName() + ">>" + consumedMsg);
 		};
-		
-		RedisMessageListner<Message> listener2 = (consumedMsg) -> {
-			System.out.println("Inside the procerssor");
 
-			System.out.println(Thread.currentThread().getName() +">>"+ consumedMsg);
-		};
 		
+
 		/// consumer.consume("1234567890", listener);
-		consumer.subscribe(channelName, listener2);
+		//consumer.subscribe(channelName, listener2);
 		consumer.subscribe(channelName, listener);
+		
+		
+		for(int i=0;i<100000;i++) {
+			Message msg = new Message();
+			msg.setBody("Hi-"+i);
+			msg.setSender("1234567890");
+			msg.setSentTime(LocalDateTime.now());
+			System.out.println("Publishing message");
+			publisher.publishMessage(msg, "1234567890");
+		}
+		
 
 	}
 }

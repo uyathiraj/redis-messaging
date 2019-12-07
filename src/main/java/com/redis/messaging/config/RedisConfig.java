@@ -14,9 +14,14 @@ import com.redis.messaging.util.StringUtils;
 
 public final class RedisConfig {
 	/**
-	 * Maximum consumer threads to allocate in thread pools
+	 * Maximum consumer threads to allocate in thread pool
 	 */
 	public static int MAX_CONSUMER_THREADS = 5;
+	
+	/**
+	 * Poll timing for consumer for the delay
+	 */
+	public static int CONSUMER_POLL_TIME = 5;
 
 	private static RedisConfig redisConfig;
 

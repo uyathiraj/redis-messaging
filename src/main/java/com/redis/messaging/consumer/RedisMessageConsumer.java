@@ -1,7 +1,6 @@
 package com.redis.messaging.consumer;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +13,7 @@ import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RedissonClient;
 
 import com.redis.messaging.config.RedisConfig;
+import com.redis.messaging.error.RedisMessageException;
 import com.redis.messaging.listener.RedisMessageListner;
 import com.redis.messaging.model.Message;
 
@@ -27,6 +27,10 @@ public class RedisMessageConsumer<T extends Message> implements MessageConsumer<
 
 	private Map<String, Set<RedisMessageListner<T>>> listenersMap = new ConcurrentHashMap<>();
 
+	public static <V extends Message> RedisMessageConsumer<V> getNewInstance(Class<V> clazz) {
+		return new RedisMessageConsumer<V>();
+	}
+
 	public RedisMessageConsumer() {
 		this.client = RedisConfig.getInstance().build();
 	}
@@ -34,30 +38,42 @@ public class RedisMessageConsumer<T extends Message> implements MessageConsumer<
 	public T consume(String channelName) throws InterruptedException {
 		RBlockingQueue<T> queue = client.getBlockingQueue(channelName);
 
-		T msg = queue.poll(5, TimeUnit.SECONDS);
+		T msg = queue.poll(RedisConfig.CONSUMER_POLL_TIME, TimeUnit.SECONDS);
 		return msg;
 	}
 
 	@Override
-	public void consume(String channelName, RedisMessageListner<T> listner) {
+	public void consume(String channelName, RedisMessageListner<T> listner) throws RedisMessageException {
 		RBlockingQueue<T> queue = client.getBlockingQueue(channelName);
 		System.out.println("Consuming messages from " + channelName);
-		while (!queue.isEmpty()) {
-			T msg = queue.poll();
-			listner.process(msg);
+		while (true) {
+			
+			try {
+				T msg = queue.poll(RedisConfig.CONSUMER_POLL_TIME, TimeUnit.SECONDS);
+				if (msg != null) {
+					listner.process(msg);
+				}
+			} catch (InterruptedException e) {
+				throw new RedisMessageException(e);
+			}
+			
 		}
 
 	}
-	
-	
-	
+
 	@Override
 	public void subscribe(String channelName, RedisMessageListner<T> listener) {
-		
+
 		Set<RedisMessageListner<T>> listenerSet = listenersMap.getOrDefault(channelName,
 				new HashSet<RedisMessageListner<T>>());
 		listenerSet.add(listener);
-		executor.execute(() -> consume(channelName, listener));
+		executor.execute(() -> {
+			try {
+				consume(channelName, listener);
+			} catch (RedisMessageException e) {
+				
+			}
+		});
 		listenersMap.put(channelName, listenerSet);
 		LOGGER.info("Listener subscribed to " + channelName);
 	}
@@ -67,4 +83,5 @@ public class RedisMessageConsumer<T extends Message> implements MessageConsumer<
 		listenrList.forEach(item -> subscribe(channelName, item));
 
 	}
+
 }
