@@ -1,4 +1,4 @@
-package com.redis.messaging.publisher;
+package com.redis.messaging.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

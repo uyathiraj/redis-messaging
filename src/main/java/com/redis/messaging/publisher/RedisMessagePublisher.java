@@ -9,6 +9,9 @@ import org.redisson.api.RQueue;
 import org.redisson.api.RQueueAsync;
 import org.redisson.api.RedissonClient;
 
+import com.redis.messaging.config.RedisConfig;
+import com.redis.messaging.model.Message;
+
 /**
  * 
  * @author yathiraj

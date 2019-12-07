@@ -3,9 +3,9 @@ package com.redis.messaging.client;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.redis.messaging.publisher.Message;
-import com.redis.messaging.publisher.RedisMessageConsumer;
-import com.redis.messaging.publisher.RedisMessageListner;
+import com.redis.messaging.consumer.RedisMessageConsumer;
+import com.redis.messaging.listener.RedisMessageListner;
+import com.redis.messaging.model.Message;
 import com.redis.messaging.publisher.RedisMessagePublisher;
 
 public class Client {

@@ -1,4 +1,4 @@
-package com.redis.messaging.publisher;
+package com.redis.messaging.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

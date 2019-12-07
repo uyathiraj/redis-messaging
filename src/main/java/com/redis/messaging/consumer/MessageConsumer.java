@@ -1,6 +1,9 @@
-package com.redis.messaging.publisher;
+package com.redis.messaging.consumer;
 
 import java.util.Set;
+
+import com.redis.messaging.listener.RedisMessageListner;
+import com.redis.messaging.model.Message;
 
 import reactor.util.annotation.NonNull;
 

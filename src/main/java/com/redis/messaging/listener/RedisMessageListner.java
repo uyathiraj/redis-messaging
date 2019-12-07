@@ -1,4 +1,4 @@
-package com.redis.messaging.publisher;
+package com.redis.messaging.listener;
 
 @FunctionalInterface
 public interface RedisMessageListner<T> {

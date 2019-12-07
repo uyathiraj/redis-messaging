@@ -1,4 +1,4 @@
-package com.redis.messaging.publisher;
+package com.redis.messaging.consumer;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +12,10 @@ import java.util.logging.Logger;
 
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RedissonClient;
+
+import com.redis.messaging.config.RedisConfig;
+import com.redis.messaging.listener.RedisMessageListner;
+import com.redis.messaging.model.Message;
 
 public class RedisMessageConsumer<T extends Message> implements MessageConsumer<T> {
 

@@ -2,6 +2,8 @@ package com.redis.messaging.publisher;
 
 import java.util.List;
 
+import com.redis.messaging.model.Message;
+
 /**
  * 
  * @author yathiraj
