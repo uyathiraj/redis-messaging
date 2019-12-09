@@ -17,4 +17,8 @@ public interface MessagePublisher<T extends Message> {
 	void publishMessage(T message, String channelName);
 
 	void publishBatchMessage(List<T> messages, String channelName) throws RedisMessageException;
+
+	void retryPublish(T message, String channelName);
+
+	void retryPublish(List<T> messageList, String channelName);
 }
