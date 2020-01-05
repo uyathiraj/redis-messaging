@@ -94,7 +94,12 @@ public class RedisMessagePublisher<T extends Message> implements MessagePublishe
 		while (i < RedisConfig.MAX_RETRY) {
 			System.out.println("Retrying publish of " + message.getId());
 			i++;
-			publishMessage(message, channelName);
+			RQueue<Message> queue = client.getQueue(channelName);
+			message.setId(generateId());
+			boolean res = queue.add(message);
+			if (res) {
+				return;
+			}
 		}
 
 	}

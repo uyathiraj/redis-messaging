@@ -65,26 +65,28 @@ public class RedisMessageConsumer<T extends Message> implements MessageConsumer<
 	public void consume(String channelName, RedisMessageListner<T> listner) throws RedisMessageException {
 		RBlockingQueue<T> queue = client.getBlockingQueue(channelName);
 		System.out.println("Consuming messages from " + channelName);
-		while (true) {
-			T msg = null;
-			try {
+		executor.execute(() -> {
+			while (true) {
+				T msg = null;
+				try {
 
-				msg = queue.poll(RedisConfig.CONSUMER_POLL_TIME, TimeUnit.SECONDS);
-				if (msg != null) {
-					listner.process(msg);
+					msg = queue.poll(RedisConfig.CONSUMER_POLL_TIME, TimeUnit.SECONDS);
+					if (msg != null) {
+						listner.process(msg);
+					}
+
+				} catch (InterruptedException e) {
+
+					if (RedisConfig.enableDeadLetterQueue) {
+						RedisMessageConsumer.deadQueueLetterPublisher.publishMessage(msg,
+								RedisConfig.DEAD_LETTER_QUEUE);
+
+					}
+
 				}
 
-			} catch (InterruptedException e) {
-
-				if (RedisConfig.enableDeadLetterQueue) {
-					RedisMessageConsumer.deadQueueLetterPublisher.publishMessage(msg, RedisConfig.DEAD_LETTER_QUEUE);
-
-				}
-
-				throw new RedisMessageException(e);
 			}
-
-		}
+		});
 
 	}
 

@@ -28,5 +28,6 @@
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.6.4</version>
 		</dependency>
+		
 	</dependencies>
 </project>
