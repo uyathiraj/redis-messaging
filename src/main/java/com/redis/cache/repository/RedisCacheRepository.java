@@ -9,13 +9,13 @@ import org.redisson.api.RedissonClient;
 import com.redis.cache.config.RId;
 import com.redis.cache.config.RTable;
 import com.redis.cache.exception.InvalidEntityDeclarationException;
+import com.redis.exception.RedisException;
 import com.redis.messaging.config.RedisConfig;
 
 public class RedisCacheRepository<T, ID> implements CacheRepository<T, ID> {
 
 	private RedissonClient client;
-	
-	
+
 	private String BUCKET_NAME = "mybucket";
 
 	public RedisCacheRepository() {
@@ -30,7 +30,7 @@ public class RedisCacheRepository<T, ID> implements CacheRepository<T, ID> {
 		if (tableAnn == null || tableAnn.length == 0) {
 			throw new InvalidEntityDeclarationException("Entity is not decalred properly");
 		}
-		//String bucketName = tableAnn[0].name();
+		// String bucketName = tableAnn[0].name();
 		String bucketName = BUCKET_NAME;
 		Field idField = null;
 		for (Field f : fileds) {
@@ -63,30 +63,28 @@ public class RedisCacheRepository<T, ID> implements CacheRepository<T, ID> {
 		try {
 			/// System.out.println(bucketName);
 			// String bucketName = t.getClass().getSimpleName();
-			//ParameterizedType paramType = (ParameterizedType) this.getClass().getGenericInterfaces()[0];
-			//Class<T> clazz = (Class<T>) paramType.getActualTypeArguments()[0].getClass();
-			
-			//System.out.println(clazz.newInstance().toString());
+			// ParameterizedType paramType = (ParameterizedType)
+			/// this.getClass().getGenericInterfaces()[0];
+			// Class<T> clazz = (Class<T>) paramType.getActualTypeArguments()[0].getClass();
+
+			// System.out.println(clazz.newInstance().toString());
 			String bucketName = BUCKET_NAME;
 			RMap<ID, T> map = client.getMap(bucketName);
 			return map.get(id);
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RedisException(e);
 		}
-		return null;
 	}
 
 	@Override
 	public T delete(ID id) {
-		// TODO Auto-generated method stub
-		return null;
+		RMap<ID, T> map = client.getMap(BUCKET_NAME);
+		return map.remove(id);
 	}
 
 	@Override
-	public T update(ID id) {
-		// TODO Auto-generated method stub
-		return null;
+	public T update(T entity) {
+		return save(entity);
 	}
 
 }

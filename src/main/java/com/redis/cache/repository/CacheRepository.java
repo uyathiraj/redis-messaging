@@ -17,5 +17,5 @@ public interface CacheRepository<T, ID> {
 
 	public T delete(ID id) throws RedisException;
 
-	public T update(ID id) throws RedisException;
+	public T update(T id) throws RedisException;
 }
